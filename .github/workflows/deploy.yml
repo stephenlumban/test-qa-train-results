@@ -1,0 +1,45 @@
+name: Deploy Smoke Results to Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare archive and latest
+        run: |
+          set -euo pipefail
+          ts="$(date -u +%Y%m%d-%H%M)"
+          mkdir -p old-runs
+          if [ -d latest ] && [ "$(ls -A latest || true)" ]; then
+            mv latest "old-runs/${ts}"
+          fi
+          mkdir -p latest
+          if [ -d input/report ] && [ "$(ls -A input/report || true)" ]; then
+            rsync -a --delete input/report/ latest/
+          else
+            echo "No input/report/ found. Skipping update of latest." >&2
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
