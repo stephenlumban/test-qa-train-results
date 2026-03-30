@@ -1,7 +1,0 @@
-Plane QA Train — Chat Widget
-Run time: 2026-03-30 00:59 UTC
-Spec: tests/features/ui/TQA-007.spec.js
-Result: 6 passed, 1 failed
-Confirmed failure: Clicking the floating action button toggles the assistant open and closed
-Observed: second FAB click leaves the Train Assistant panel open
-Comments checked in Plane: none
